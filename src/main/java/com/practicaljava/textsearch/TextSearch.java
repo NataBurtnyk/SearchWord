@@ -1,44 +1,24 @@
 package com.practicaljava.textsearch;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class TextSearch {
 
 	private static String fileName = ("Text.txt");
-	public static void main(String[] args) throws FileNotFoundException {
 
-	}
-	
-	public String read(String q) throws FileNotFoundException {
+	public ArrayList<String> read(String q) throws FileNotFoundException { // Назание не очень
 		isFileExists();
-		
-		StringBuilder sb = new StringBuilder();
-		BufferedReader in = null;
-		try {
-			in = new BufferedReader(new FileReader(accessToFile()));
-			String s;
-
-			while ((s = in.readLine()) != null) {
-				
-					
-					sb.append(s);
-					sb.append("\n");
-				}
-			
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			try {
-				in.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+		Scanner sc = new Scanner(new File(accessToFile())).useDelimiter(" ");
+		ArrayList<String> result = new ArrayList<String>();
+		while (sc.hasNext()) {
+			if (q.equalsIgnoreCase(sc.next())) {
+				result.add(q);
 			}
 		}
-		return sb.toString();
+		return result;
 	}
 
 	private void isFileExists() throws FileNotFoundException {
@@ -47,8 +27,9 @@ public class TextSearch {
 			throw new FileNotFoundException(file.getAbsolutePath());
 		}
 	}
-	
-	private String accessToFile() {
-		return this.getClass().getClassLoader().getResource(fileName).getFile();
+
+	private static String accessToFile() { // Название не очень
+		return TextSearch.class.getClassLoader().getResource(fileName)
+				.getFile();
 	}
 }
