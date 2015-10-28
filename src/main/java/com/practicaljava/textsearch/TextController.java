@@ -1,6 +1,7 @@
 package com.practicaljava.textsearch;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,9 +18,13 @@ public class TextController extends HttpServlet {
 		response.setContentType("application/json");
 		
 		TextSearch fileSearch = new TextSearch();
-		Text text = new Text(fileSearch.read(request.getParameter("q")));
-		
+		String value = request.getParameter("q");
+		Text text = null;
+		if (value == null || value.equals("")) {
+			text = new Text<String>(fileSearch.getAllText());
+		} else {
+			text = new Text<ArrayList<String>>(fileSearch.searchByQuery(value));
+		}
 		response.getWriter().write(new Gson().toJson(text));
 	}
-
 }

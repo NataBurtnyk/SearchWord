@@ -1,13 +1,11 @@
 package com.practicaljava.textsearch;
 
-import java.util.ArrayList;
 
-public class Text {
+public class Text<T> {
 	
-	private ArrayList<String> text;
+	private T text;
 	
-	public Text( ArrayList<String> arrayList) {
-		this.text = arrayList;
+	public Text(T text) {
+		this.text = text;
 	}
-
 }
