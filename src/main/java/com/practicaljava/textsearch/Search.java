@@ -1,32 +1,67 @@
 package com.practicaljava.textsearch;
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class TextSearch {
+public class Search {
 
 	private static String fileName = ("Text.txt");
-
-	public ArrayList<String> searchByQuery(String q, int length)
+	
+	public MetaData getAttributes() throws IOException, ParseException{
+		File file = new File(accessToFile());
+		
+		BasicFileAttributes attr = Files.readAttributes(Paths.get(accessToFile()), BasicFileAttributes.class);
+		
+		double size = (file.length() / 1024.0);
+	
+		String date = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.S").format(attr.creationTime().toMillis());
+	
+		return new MetaData(file.getName(), Double.toString(size) + "KB", date);
+	}
+	
+	public ArrayList<String> searchByQuery(String q,int length)
 			throws FileNotFoundException { 
+		long size = 0;
+		
 		isFileExists();
+		
 		Scanner sc = new Scanner(new File(accessToFile())).useDelimiter("\\s*[<,\". >]\\s*");
 		ArrayList<String> result = new ArrayList<String>();
 		String s = null;
 		while (sc.hasNext()) {
 			s = sc.next();
 			if (s.equalsIgnoreCase(q) || s.contains(q)) {
-				if(s.length() <= length && length !=0) {					
+				if(s.length() <= length && length !=0) {
+					size += s.length();
+					if(size>=15){
+						break;
+					}
 					result.add(s);
 				} else if(length != 0) {
+					size += s.substring(0, length).length();
+					if(size>=15){
+						break;
+					}
 					result.add(s.substring(0, length));
 				} else {
+					size += s.length();
+					if(size>=15){
+						break;
+					}
 					result.add(s);
 				}
 			}
@@ -69,7 +104,7 @@ public class TextSearch {
 	}
 
 	private static String accessToFile() {
-		return TextSearch.class.getClassLoader().getResource(fileName)
+		return Search.class.getClassLoader().getResource(fileName)
 				.getFile();
 	}
 }
